@@ -10,6 +10,8 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler
 import com.yt8492.seihekianalyzerbot.entity.Work
 import com.yt8492.seihekianalyzerbot.service.SeihekiAnalyzerService
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 
 @LineMessageHandler
@@ -22,7 +24,11 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         val messageText = event.message.text
         val userId = event.source.userId
         when (messageText) {
-            "analyze" -> analyze(userId)
+            "analyze" -> {
+                GlobalScope.launch {
+                    analyze(userId)
+                }
+            }
             else -> reply(event.replyToken, messageText)
         }
     }
