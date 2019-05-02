@@ -29,7 +29,7 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
                     analyze(userId)
                 }
             }
-            else -> reply(event.replyToken, messageText)
+            else -> seihekiAnalyzerService.saveTest(messageText)
         }
     }
 

@@ -6,4 +6,5 @@ interface SeihekiAnalyzerService {
     fun findAll(): List<Work>
     fun fetchWorkByUrl(url: String): Work
     fun saveWork(work: Work)
+    fun saveTest(test: String)
 }

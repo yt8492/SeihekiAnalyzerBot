@@ -1,11 +1,9 @@
 package com.yt8492.seihekianalyzerbot.service
 
-import com.yt8492.seihekianalyzerbot.entity.Tag
-import com.yt8492.seihekianalyzerbot.entity.Url
-import com.yt8492.seihekianalyzerbot.entity.UrlTag
-import com.yt8492.seihekianalyzerbot.entity.Work
+import com.yt8492.seihekianalyzerbot.entity.*
 import com.yt8492.seihekianalyzerbot.property.SeihekiAnalyzerConfiguration
 import com.yt8492.seihekianalyzerbot.repository.TagRepository
+import com.yt8492.seihekianalyzerbot.repository.TestRepository
 import com.yt8492.seihekianalyzerbot.repository.UrlRepository
 import com.yt8492.seihekianalyzerbot.repository.UrlTagRepository
 import com.yt8492.seihekianalyzerbot.tools.SeihekiAnalyzer
@@ -18,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional
 class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
                                  private val tagRepository: TagRepository,
                                  private val urlTagRepository: UrlTagRepository,
-                                 private val seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration)
+                                 private val seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration,
+                                 private val testRepository: TestRepository)
     : SeihekiAnalyzerService {
     override fun findAll(): List<Work> {
         val seihekiAnalyzer = SeihekiAnalyzer.login(seihekiAnalyzerConfiguration.id, seihekiAnalyzerConfiguration.password) ?: return listOf()
@@ -47,5 +46,9 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
         val urlTags = tags.map { UrlTag(urlId = url.id!!, tagId = it.id!!) }
         urlTagRepository.saveAll(urlTags)
         urlTagRepository.flush()
+    }
+
+    override fun saveTest(test: String) {
+        testRepository.save(Test(testData = test))
     }
 }
