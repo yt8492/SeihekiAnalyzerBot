@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UrlTagRepository : JpaRepository<UrlTag, Long> {
     fun findByUrlId(urlId: Long): List<UrlTag>
+    fun findByUrlIdAndTagId(urlId: Long, tagId: Long): UrlTag?
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UrlRepository : JpaRepository<Url, Long> {
-    fun findByUrl(url: String): Url
+    fun findByUrl(url: String): Url?
 }

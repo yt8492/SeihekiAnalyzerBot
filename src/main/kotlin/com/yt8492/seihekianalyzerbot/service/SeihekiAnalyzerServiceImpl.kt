@@ -32,20 +32,19 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
         return allWorks
     }
 
-    override fun fetchWorkByUrl(url: String): Work = Work(url, urlTagRepository.findByUrlId(urlRepository.findByUrl(url).id!!).map { urlTag ->
+    override fun fetchWorkByUrl(url: String): Work = Work(url, urlTagRepository.findByUrlId(urlRepository.findByUrl(url)?.id!!).map { urlTag ->
         tagRepository.findByIdOrNull(urlTag.tagId)!!.tag
     })
 
     override fun saveWork(work: Work) {
         val url = Url(url = work.url)
         val tags = work.tags.map { Tag(tag = it) }
-        urlRepository.save(url)
-        urlRepository.flush()
-        tagRepository.saveAll(tags)
-        tagRepository.flush()
-        val urlTags = tags.map { UrlTag(urlId = url.id!!, tagId = it.id!!) }
-        urlTagRepository.saveAll(urlTags)
-        urlTagRepository.flush()
+        if (urlRepository.findByUrl(work.url) == null) {
+            urlRepository.saveAndFlush(url)
+        }
+        tagRepository.saveAll(tags.filter { tagRepository.findByTag(it.tag) == null })
+        val urlTags = tags.map { UrlTag(urlId = url.id, tagId = it.id) }
+        urlTagRepository.saveAll(urlTags.filter { urlTagRepository.findByUrlIdAndTagId(it.urlId, it.tagId) == null })
     }
 
     override fun saveTest(test: String) {
