@@ -7,7 +7,7 @@ import javax.persistence.*
 data class UrlTag(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long? = null,
+        val id: Long = 0,
         val urlId: Long,
         val tagId: Long
 )
