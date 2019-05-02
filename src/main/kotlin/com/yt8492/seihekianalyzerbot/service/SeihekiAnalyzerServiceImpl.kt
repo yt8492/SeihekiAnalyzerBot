@@ -41,8 +41,11 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
         val url = Url(url = work.url)
         val tags = work.tags.map { Tag(tag = it) }
         urlRepository.save(url)
+        urlRepository.flush()
         tagRepository.saveAll(tags)
+        tagRepository.flush()
         val urlTags = tags.map { UrlTag(urlId = url.id!!, tagId = it.id!!) }
         urlTagRepository.saveAll(urlTags)
+        urlTagRepository.flush()
     }
 }
