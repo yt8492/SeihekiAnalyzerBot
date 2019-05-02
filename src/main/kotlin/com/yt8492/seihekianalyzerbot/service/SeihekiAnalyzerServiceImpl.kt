@@ -44,7 +44,11 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
         }
         tagRepository.saveAll(tags.filter { tagRepository.findByTag(it.tag) == null })
         val urlTags = tags.map { UrlTag(urlId = url.id, tagId = it.id) }
-        urlTagRepository.saveAll(urlTags.filter { urlTagRepository.findByUrlIdAndTagId(it.urlId, it.tagId) == null })
+        urlTags.forEach {
+            if (urlTagRepository.findByUrlIdAndTagId(it.urlId, it.tagId) == null) {
+                urlTagRepository.saveAndFlush(it)
+            }
+        }
     }
 
     override fun saveTest(test: String) {
