@@ -7,6 +7,6 @@ import javax.persistence.*
 data class Test(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long = 0,
+        val id: Long? = null,
         val testData: String
 )

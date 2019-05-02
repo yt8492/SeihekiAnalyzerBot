@@ -7,6 +7,6 @@ import javax.persistence.*
 data class Tag(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long = 0,
+        val id: Long? = null,
         val tag: String
 )

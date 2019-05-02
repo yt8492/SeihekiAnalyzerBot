@@ -7,6 +7,6 @@ import javax.persistence.*
 data class Url(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long = 0,
+        val id: Long? = null,
         val url: String
 )
