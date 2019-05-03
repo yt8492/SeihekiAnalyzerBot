@@ -40,13 +40,13 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
         val url = Url(url = work.url)
         val tags = work.tags.map { Tag(tag = it) }
         if (urlRepository.findByUrl(work.url) == null) {
-            urlRepository.saveAndFlush(url)
+            urlRepository.save(url)
         }
         tagRepository.saveAll(tags.filter { tagRepository.findByTag(it.tag) == null })
         val urlTags = tags.map { UrlTag(urlId = url.id, tagId = it.id) }
         urlTags.forEach {
             if (urlTagRepository.findByUrlIdAndTagId(it.urlId, it.tagId) == null) {
-                urlTagRepository.saveAndFlush(it)
+                urlTagRepository.save(it)
             }
         }
     }
