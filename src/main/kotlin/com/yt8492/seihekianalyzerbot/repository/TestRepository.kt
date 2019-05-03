@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TestRepository : CrudRepository<Test, Long> {
+    fun findByTestData(testData: String): Test?
 }

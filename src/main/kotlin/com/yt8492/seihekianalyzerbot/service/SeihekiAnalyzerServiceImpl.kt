@@ -52,6 +52,8 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
     }
 
     override fun saveTest(test: String) {
-        testRepository.save(Test(testData = test))
+        if (testRepository.findByTestData(test) == null) {
+            testRepository.save(Test(testData = test))
+        }
     }
 }
