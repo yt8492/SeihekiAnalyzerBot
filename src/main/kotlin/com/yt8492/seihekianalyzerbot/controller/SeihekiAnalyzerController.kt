@@ -42,10 +42,10 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
             tagCnt[tag] = cnt
         }
         val result = tagCnt.toList()
-                .sortedBy { it.second }
+                .sortedByDescending { it.second }
                 .take(10)
                 .mapIndexed { index, pair ->
-                    "%02d位 %2.2f%%: ${pair.first}".format(index + 1, (pair.second.toDouble() / tagCnt.size) * 100)
+                    "%2d位 %2.2f%%: ${pair.first}".format(index + 1, (pair.second.toDouble() / tagCnt.size) * 100)
                 }.joinToString("\n")
         pushMessage(userId, result)
     }
