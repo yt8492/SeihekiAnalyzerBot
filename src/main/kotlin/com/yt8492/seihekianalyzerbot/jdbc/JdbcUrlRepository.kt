@@ -25,8 +25,7 @@ class JdbcUrlRepository(private val jdbcTemplate: JdbcTemplate) : UrlRepository 
     }
 
     override fun save(url: String): Url {
-        jdbcTemplate.update("INSERT INTO url (url) VALUES (?)", url)
-        val id = jdbcTemplate.queryForObject("SELECT last_insert_id()", Long::class.java) ?: error("insert failed")
+        val id = jdbcTemplate.queryForObject("INSERT INTO url (url) VALUES (?) RETURNING id", Long::class.java, url)
         return Url(id, url)
     }
 }

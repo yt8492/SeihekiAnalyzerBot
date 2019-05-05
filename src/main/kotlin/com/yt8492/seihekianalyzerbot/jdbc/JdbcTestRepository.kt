@@ -21,8 +21,7 @@ class JdbcTestRepository(private val jdbcTemplate: JdbcTemplate) : TestRepositor
     }
 
     override fun save(test: String): Test {
-        jdbcTemplate.update("INSERT INTO test (test_data) VALUES (?)", test)
-        val id = jdbcTemplate.queryForObject("SELECT last_insert_id()", Long::class.java) ?: error("insert failed")
+        val id = jdbcTemplate.queryForObject("INSERT INTO test (test_data) VALUES (?) RETURNING id", Long::class.java, test)
         return Test(id, test)
     }
 }

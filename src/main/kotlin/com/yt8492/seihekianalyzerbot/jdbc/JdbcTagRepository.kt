@@ -4,6 +4,7 @@ import com.yt8492.seihekianalyzerbot.entity.Tag
 import com.yt8492.seihekianalyzerbot.repository.TagRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.queryForObject
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -21,8 +22,7 @@ class JdbcTagRepository(private val jdbcTemplate: JdbcTemplate) : TagRepository 
     }
 
     override fun save(tag: String): Tag {
-        jdbcTemplate.update("INSERT INTO tag (tag) VALUES (?)", tag)
-        val id = jdbcTemplate.queryForObject("SELECT last_insert_id()", Long::class.java) ?: error("insert failed")
+        val id = jdbcTemplate.queryForObject("INSERT INTO tag (tag) VALUES (?) RETURNING id",Long::class.java, tag)
         return Tag(id, tag)
     }
 }
