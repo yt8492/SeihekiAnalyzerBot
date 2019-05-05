@@ -1,10 +1,9 @@
 package com.yt8492.seihekianalyzerbot.repository
 
 import com.yt8492.seihekianalyzerbot.entity.Tag
-import org.springframework.data.repository.CrudRepository
-import org.springframework.stereotype.Repository
 
-@Repository
-interface TagRepository : CrudRepository<Tag, Long> {
+interface TagRepository {
+    fun findById(id: Long): Tag?
     fun findByTag(tag: String): Tag?
+    fun save(tag: String): Tag
 }
