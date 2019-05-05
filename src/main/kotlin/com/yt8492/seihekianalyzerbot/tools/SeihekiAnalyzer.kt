@@ -62,12 +62,8 @@ class SeihekiAnalyzer private constructor(private val loginCookies: Map<String, 
                 row.child(0).text() == "ジャンル"
             }?.getElementsByClass("main_genre")?.select("[href]")?.text()?.split(" ".toRegex()) ?: listOf()
             tags.forEach { tag ->
-                var cnt = genreCnt[tag]
-                cnt = if (cnt == null) {
-                    1
-                } else {
-                    cnt + 1
-                }
+                var cnt = genreCnt[tag] ?: 0
+                cnt++
                 genreCnt[tag] = cnt
             }
             return true
@@ -77,42 +73,6 @@ class SeihekiAnalyzer private constructor(private val loginCookies: Map<String, 
             return analyzeTag(url, callback, failureCnt + 1)
         } catch (e: Exception) {
             return analyzeTag(url, callback, 5)
-        }
-    }
-
-    private fun analyzeTagWithDB(seihekiAnalyzerService: SeihekiAnalyzerService,
-                                 url: String, callback: Callback, failureCnt: Int = 0): Boolean {
-        try {
-            when {
-                failureCnt == 0 -> callback.onAnalyzingTag(url, false)
-                failureCnt < 5 -> callback.onAnalyzingTag(url, true)
-                else -> {
-                    callback.onTagAnalyzeFailure(url)
-                    return false
-                }
-            }
-            val voicePage = JsoupUtils.requestByGet(url).parse()
-            val rows = voicePage.getElementById("work_outline").select("tr")
-            val tags = rows.find { row ->
-                row.child(0).text() == "ジャンル"
-            }?.getElementsByClass("main_genre")?.select("[href]")?.text()?.split(" ".toRegex()) ?: listOf()
-            tags.forEach { tag ->
-                var cnt = genreCnt[tag]
-                cnt = if (cnt == null) {
-                    1
-                } else {
-                    cnt + 1
-                }
-                genreCnt[tag] = cnt
-            }
-            return true
-        } catch (e: SocketTimeoutException) {
-            return analyzeTag(url, callback, failureCnt + 1)
-        } catch (e: UnknownHostException) {
-            return analyzeTag(url, callback, failureCnt + 1)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return analyzeTag(url, callback, failureCnt + 1)
         }
     }
 
