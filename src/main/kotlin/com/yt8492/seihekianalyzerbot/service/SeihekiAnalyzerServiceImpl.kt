@@ -42,9 +42,9 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
     private fun createWork(url: String): Work {
         val urlId = urlRepository.save(url).id
         val tags = SeihekiAnalyzer.getTagsfromUrl(url)
-        tags.map { tagRepository.save(it) }
-                .forEach {
-                    urlTagRepository.save(urlId, it.id)
+        tags.map{ tagRepository.findByTag(it) ?: tagRepository.save(it) }
+                .forEach { tag ->
+                    urlTagRepository.findByUrlIdAndTagId(urlId, tag.id) ?: urlTagRepository.save(urlId, tag.id)
                 }
         return Work(url, tags)
     }

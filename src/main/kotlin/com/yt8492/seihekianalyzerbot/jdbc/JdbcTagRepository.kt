@@ -4,7 +4,6 @@ import com.yt8492.seihekianalyzerbot.entity.Tag
 import com.yt8492.seihekianalyzerbot.repository.TagRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
-import org.springframework.jdbc.core.queryForObject
 import org.springframework.stereotype.Repository
 
 @Repository
