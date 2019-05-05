@@ -23,7 +23,7 @@ class JdbcUrlTagRepository(private val jdbcTemplate: JdbcTemplate) : UrlTagRepos
     }
 
     override fun save(urlId: Long, tagId: Long): UrlTag {
-        val id = jdbcTemplate.queryForObject("INSERT INTO url_tag (url_id, tag_id) VALUES (?, ?) RETURNING id)", Long::class.java, urlId, tagId)
+        val id = jdbcTemplate.queryForObject("INSERT INTO url_tag (url_id, tag_id) VALUES (?, ?) RETURNING id", Long::class.java, urlId, tagId)
         return UrlTag(id, urlId, tagId)
     }
 }
