@@ -13,11 +13,11 @@ class JdbcTestRepository(private val jdbcTemplate: JdbcTemplate) : TestRepositor
     }
 
     override fun findById(id: Long): Test? {
-        return jdbcTemplate.query("SELECT id, test FROM test WHERE id = ?", rowMapper, id).firstOrNull()
+        return jdbcTemplate.query("SELECT id, test_data FROM test WHERE id = ?", rowMapper, id).firstOrNull()
     }
 
     override fun findByTestData(testData: String): Test? {
-        return jdbcTemplate.query("SELECT id, test FROM test WHERE test_data = ?", rowMapper, testData).firstOrNull()
+        return jdbcTemplate.query("SELECT id, test_data FROM test WHERE test_data = ?", rowMapper, testData).firstOrNull()
     }
 
     override fun save(test: String): Test {
