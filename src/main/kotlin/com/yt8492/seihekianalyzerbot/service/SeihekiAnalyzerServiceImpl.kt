@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
                                  private val tagRepository: TagRepository,
                                  private val urlTagRepository: UrlTagRepository,
-                                 private val userRepository: UserRepository,
+                                 private val lineUserRepository: LineUserRepository,
                                  seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration,
                                  private val testRepository: TestRepository)
     : SeihekiAnalyzerService {
@@ -48,7 +48,7 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
     }
 
     override fun registerUser(userId: String) {
-        userRepository.save(userId)
+        lineUserRepository.save(userId)
     }
 
     override fun saveTest(test: String) {
