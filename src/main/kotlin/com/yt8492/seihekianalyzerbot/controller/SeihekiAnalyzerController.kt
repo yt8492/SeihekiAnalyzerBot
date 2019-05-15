@@ -23,6 +23,7 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         println("event: $event")
         val messageText = event.message.text
         val userId = event.source.userId
+        println("UserId: $userId")
         when (messageText) {
             "analyze" -> {
                 GlobalScope.launch {
