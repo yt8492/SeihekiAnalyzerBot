@@ -2,10 +2,7 @@ package com.yt8492.seihekianalyzerbot.service
 
 import com.yt8492.seihekianalyzerbot.entity.*
 import com.yt8492.seihekianalyzerbot.property.SeihekiAnalyzerConfiguration
-import com.yt8492.seihekianalyzerbot.repository.TagRepository
-import com.yt8492.seihekianalyzerbot.repository.TestRepository
-import com.yt8492.seihekianalyzerbot.repository.UrlRepository
-import com.yt8492.seihekianalyzerbot.repository.UrlTagRepository
+import com.yt8492.seihekianalyzerbot.repository.*
 import com.yt8492.seihekianalyzerbot.tools.SeihekiAnalyzer
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
                                  private val tagRepository: TagRepository,
                                  private val urlTagRepository: UrlTagRepository,
+                                 private val userRepository: UserRepository,
                                  seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration,
                                  private val testRepository: TestRepository)
     : SeihekiAnalyzerService {
@@ -47,6 +45,10 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
                     urlTagRepository.findByUrlIdAndTagId(urlId, tag.id) ?: urlTagRepository.save(urlId, tag.id)
                 }
         return Work(url, tags)
+    }
+
+    override fun registerUser(userId: String) {
+        userRepository.save(userId)
     }
 
     override fun saveTest(test: String) {

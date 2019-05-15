@@ -3,6 +3,7 @@ package com.yt8492.seihekianalyzerbot.controller
 import com.linecorp.bot.client.LineMessagingClient
 import com.linecorp.bot.model.PushMessage
 import com.linecorp.bot.model.ReplyMessage
+import com.linecorp.bot.model.event.FollowEvent
 import com.linecorp.bot.model.event.MessageEvent
 import com.linecorp.bot.model.event.message.TextMessageContent
 import com.linecorp.bot.model.message.TextMessage
@@ -12,7 +13,6 @@ import com.yt8492.seihekianalyzerbot.entity.Work
 import com.yt8492.seihekianalyzerbot.service.SeihekiAnalyzerService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.springframework.beans.factory.annotation.Autowired
 
 @LineMessageHandler
 open class SeihekiAnalyzerController(private val seihekiAnalyzerService: SeihekiAnalyzerService,
@@ -31,6 +31,12 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
             }
             else -> seihekiAnalyzerService.saveTest(messageText)
         }
+    }
+
+    @EventMapping
+    fun handleFollowEvent(event: FollowEvent) {
+        val userId = event.source.userId
+        seihekiAnalyzerService.registerUser(userId)
     }
 
     private fun analyze(userId: String) {
