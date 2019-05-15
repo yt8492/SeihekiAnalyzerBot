@@ -49,12 +49,9 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         }
         val result = tagCnt.toList()
                 .sortedByDescending { it.second }
-                .also { println(it.joinToString {
-                    "Tag: ${it.first}, Cnt: ${it.second}"
-                }) }
                 .take(10)
                 .mapIndexed { index, pair ->
-                    "%2d位 %2.2f%%: ${pair.first}".format(index + 1, (pair.second.toDouble() / tagCnt.size) * 100)
+                    "%2d位 %2.2f%%: ${pair.first}".format(index + 1, (pair.second.toDouble() / works.size) * 100)
                 }.joinToString("\n")
         pushMessage(userId, result)
     }
