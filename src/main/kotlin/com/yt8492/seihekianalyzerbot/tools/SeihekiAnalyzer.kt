@@ -1,8 +1,9 @@
 package com.yt8492.seihekianalyzerbot.tools
 
-import com.yt8492.seihekianalyzerbot.service.SeihekiAnalyzerService
+import org.jsoup.nodes.Element
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.*
 
 class SeihekiAnalyzer private constructor(private val loginCookies: Map<String, String>) {
 
@@ -128,6 +129,27 @@ class SeihekiAnalyzer private constructor(private val loginCookies: Map<String, 
             return rows.find { row ->
                 row.child(0).text() == "ジャンル"
             }?.getElementsByClass("main_genre")?.select("[href]")?.text()?.split(" ".toRegex()) ?: listOf()
+        }
+
+        @JvmStatic
+        fun getLatestWorks(): Map<String, List<String>> {
+            val today = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
+            val todayYMD = today.let { "${it.get(Calendar.YEAR)}-${it.get(Calendar.MONTH) + 1}-${it.get(Calendar.DATE)}" }
+            val latestWorksUrl = "https://www.dlsite.com/maniax/new/=/date/$todayYMD/work_type%5B0%5D/SOU"
+            val page = JsoupUtils.requestByGet(latestWorksUrl).parse()
+            val works = page.getElementsByClass("work_2col").asSequence()
+                    .map {
+                        val name = it.getElementsByClass("work_name").first().let { e ->
+                            try {
+                                e.select("[href]").toString().split("\"")[1]
+                            } catch (error: IndexOutOfBoundsException) {
+                                ""
+                            }
+                        }
+                        val tags = it.getElementsByClass("search_tag").first().getElementsByTag("a").map(Element::text)
+                        name to tags
+                    }.toMap()
+            return works
         }
     }
 }

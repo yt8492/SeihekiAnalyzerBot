@@ -11,7 +11,9 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler
 import com.yt8492.seihekianalyzerbot.entity.Work
 import com.yt8492.seihekianalyzerbot.service.SeihekiAnalyzerService
-import kotlinx.coroutines.GlobalScope
+import com.yt8492.seihekianalyzerbot.tools.SeihekiAnalyzer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @LineMessageHandler
@@ -26,8 +28,13 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         println("UserId: $userId")
         when (messageText) {
             "analyze" -> {
-                GlobalScope.launch {
-                    analyze(userId)
+                CoroutineScope(Dispatchers.IO).launch {
+                    analyzeAndPushMessage(userId)
+                }
+            }
+            "check" -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    check(userId)
                 }
             }
             else -> seihekiAnalyzerService.saveTest(messageText)
@@ -40,7 +47,7 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         seihekiAnalyzerService.registerUser(userId)
     }
 
-    private fun analyze(userId: String) {
+    private fun analyzeAndPushMessage(userId: String) {
         val works = seihekiAnalyzerService.findAll()
         val tagCnt = mutableMapOf<String, Int>()
         works.flatMap(Work::tags).forEach { tag ->
@@ -55,6 +62,36 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
                     "%2d位 %2.2f%%: ${pair.first}".format(index + 1, (pair.second.toDouble() / works.size) * 100)
                 }.joinToString("\n")
         pushMessage(userId, result)
+    }
+
+    private fun analyze(): List<Pair<String, Int>> {
+        val works = seihekiAnalyzerService.findAll()
+        val tagCnt = mutableMapOf<String, Int>()
+        works.flatMap(Work::tags).forEach { tag ->
+            var cnt = tagCnt[tag] ?: 0
+            cnt++
+            tagCnt[tag] = cnt
+        }
+        val result = tagCnt.toList()
+                .sortedByDescending { it.second }
+                .take(10)
+        return result
+    }
+
+    private fun check(userId: String) {
+        val latestWorks = SeihekiAnalyzer.getLatestWorks().map {
+            Work(it.key, it.value)
+        }
+        val myFavoriteTags = analyze().map(Pair<String, Int>::first)
+        val recommends = latestWorks.filter { work ->
+            myFavoriteTags.any { tag ->
+                work.tags.contains(tag)
+            }
+        }
+        if (recommends.isNotEmpty()) {
+            val result = "本日のオススメ作品\n${recommends.joinToString("\n") { it.url }}"
+            pushMessage(userId, result)
+        }
     }
 
     private fun reply(token: String, text: String) {
