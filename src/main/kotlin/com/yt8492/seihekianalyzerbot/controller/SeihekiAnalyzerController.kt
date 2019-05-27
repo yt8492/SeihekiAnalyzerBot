@@ -84,9 +84,8 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         }
         val myFavoriteTags = analyze().map(Pair<String, Int>::first)
         val recommends = latestWorks.filter { work ->
-            myFavoriteTags.any { tag ->
-                work.tags.contains(tag)
-            }
+            val tagCnt = work.tags.intersect(myFavoriteTags).size
+            tagCnt >= 2
         }
         if (recommends.isNotEmpty()) {
             val result = "本日のオススメ作品\n${recommends.joinToString("\n") { it.url }}"
