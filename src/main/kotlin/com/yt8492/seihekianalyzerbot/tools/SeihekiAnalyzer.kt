@@ -123,9 +123,9 @@ class SeihekiAnalyzer private constructor(private val loginCookies: Map<String, 
         }
 
         @JvmStatic
-        fun getTagsfromUrl(url: String): List<String> {
-            val voicePage = JsoupUtils.requestByGet(url).parse()
-            val rows = voicePage.getElementById("work_outline").select("tr")
+        fun getTagsFromUrl(url: String): List<String> {
+            val workPage = JsoupUtils.requestByGet(url).parse()
+            val rows = workPage.getElementById("work_outline").select("tr")
             return rows.find { row ->
                 row.child(0).text() == "ジャンル"
             }?.getElementsByClass("main_genre")?.select("[href]")?.text()?.split(" ".toRegex()) ?: listOf()

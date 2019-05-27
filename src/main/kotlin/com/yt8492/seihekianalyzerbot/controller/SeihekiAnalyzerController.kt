@@ -32,9 +32,9 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
                     analyzeAndPushMessage(userId)
                 }
             }
-            "check" -> {
+            "recommend" -> {
                 CoroutineScope(Dispatchers.IO).launch {
-                    check(userId)
+                    recommend(userId)
                 }
             }
             else -> seihekiAnalyzerService.saveTest(messageText)
@@ -78,7 +78,7 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         return result
     }
 
-    private fun check(userId: String) {
+    private fun recommend(userId: String) {
         val latestWorks = SeihekiAnalyzer.getLatestWorks().map {
             Work(it.key, it.value)
         }
