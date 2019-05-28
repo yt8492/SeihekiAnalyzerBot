@@ -67,19 +67,21 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Tokyo")
     fun recommend() {
-        val userIds = seihekiAnalyzerService.findAllUserIds()
-        val latestWorks = SeihekiAnalyzer.getLatestWorks().map {
-            Work(it.key, it.value)
-        }
-        val myFavoriteTags = analyze().map(Pair<String, Int>::first)
-        val recommends = latestWorks.filter { work ->
-            val tagCnt = work.tags.intersect(myFavoriteTags).size
-            tagCnt >= 2
-        }
-        if (recommends.isNotEmpty()) {
-            val result = "本日のオススメ作品\n${recommends.joinToString("\n") { it.url }}"
-            userIds.forEach { userId ->
-                pushMessage(userId, result)
+        CoroutineScope(Dispatchers.IO).launch {
+            val userIds = seihekiAnalyzerService.findAllUserIds()
+            val latestWorks = SeihekiAnalyzer.getLatestWorks().map {
+                Work(it.key, it.value)
+            }
+            val myFavoriteTags = analyze().map(Pair<String, Int>::first)
+            val recommends = latestWorks.filter { work ->
+                val tagCnt = work.tags.intersect(myFavoriteTags).size
+                tagCnt >= 2
+            }
+            if (recommends.isNotEmpty()) {
+                val result = "本日のオススメ作品\n${recommends.joinToString("\n") { it.url }}"
+                userIds.forEach { userId ->
+                    pushMessage(userId, result)
+                }
             }
         }
     }
