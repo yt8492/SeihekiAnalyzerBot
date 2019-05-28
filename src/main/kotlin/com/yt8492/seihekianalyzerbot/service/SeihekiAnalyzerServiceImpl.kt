@@ -19,7 +19,7 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
     val seihekiAnalyzer = SeihekiAnalyzer.login(seihekiAnalyzerConfiguration.id, seihekiAnalyzerConfiguration.password)
             ?: error("invalid userId or password")
 
-    override fun findAll(): List<Work> {
+    override fun findAllWorks(): List<Work> {
         val allUrls = seihekiAnalyzer.getUrls()
         val allWorks = allUrls.map { fetchWorkByUrl(it) }
         return allWorks
@@ -49,6 +49,10 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
 
     override fun registerUser(userId: String) {
         lineUserRepository.save(userId)
+    }
+
+    override fun findAllUserIds(): List<String> {
+        return lineUserRepository.findAll().map(LineUser::line_id)
     }
 
     override fun saveTest(test: String) {

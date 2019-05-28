@@ -15,6 +15,7 @@ import com.yt8492.seihekianalyzerbot.tools.SeihekiAnalyzer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.springframework.scheduling.annotation.Scheduled
 
 @LineMessageHandler
 open class SeihekiAnalyzerController(private val seihekiAnalyzerService: SeihekiAnalyzerService,
@@ -48,7 +49,7 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
     }
 
     private fun analyzeAndPushMessage(userId: String) {
-        val works = seihekiAnalyzerService.findAll()
+        val works = seihekiAnalyzerService.findAllWorks()
         val tagCnt = mutableMapOf<String, Int>()
         works.flatMap(Work::tags).forEach { tag ->
             var cnt = tagCnt[tag] ?: 0
@@ -64,8 +65,27 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         pushMessage(userId, result)
     }
 
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Tokyo")
+    fun recommend() {
+        val userIds = seihekiAnalyzerService.findAllUserIds()
+        val latestWorks = SeihekiAnalyzer.getLatestWorks().map {
+            Work(it.key, it.value)
+        }
+        val myFavoriteTags = analyze().map(Pair<String, Int>::first)
+        val recommends = latestWorks.filter { work ->
+            val tagCnt = work.tags.intersect(myFavoriteTags).size
+            tagCnt >= 2
+        }
+        if (recommends.isNotEmpty()) {
+            val result = "本日のオススメ作品\n${recommends.joinToString("\n") { it.url }}"
+            userIds.forEach { userId ->
+                pushMessage(userId, result)
+            }
+        }
+    }
+
     private fun analyze(): List<Pair<String, Int>> {
-        val works = seihekiAnalyzerService.findAll()
+        val works = seihekiAnalyzerService.findAllWorks()
         val tagCnt = mutableMapOf<String, Int>()
         works.flatMap(Work::tags).forEach { tag ->
             var cnt = tagCnt[tag] ?: 0
@@ -87,10 +107,12 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
             val tagCnt = work.tags.intersect(myFavoriteTags).size
             tagCnt >= 2
         }
-        if (recommends.isNotEmpty()) {
-            val result = "本日のオススメ作品\n${recommends.joinToString("\n") { it.url }}"
-            pushMessage(userId, result)
+        val result = if (recommends.isNotEmpty()) {
+            "本日のオススメ作品\n${recommends.joinToString("\n") { it.url }}"
+        } else {
+            "本日のオススメはありません。"
         }
+        pushMessage(userId, result)
     }
 
     private fun reply(token: String, text: String) {
