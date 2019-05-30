@@ -86,6 +86,14 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         }
     }
 
+    @Scheduled(cron = "0 * * * * *")
+    fun scheduledTest() {
+        val userIds = seihekiAnalyzerService.findAllUserIds()
+        userIds.forEach { user ->
+            pushMessage(user, "test")
+        }
+    }
+
     private fun analyze(): List<Pair<String, Int>> {
         val works = seihekiAnalyzerService.findAllWorks()
         val tagCnt = mutableMapOf<String, Int>()
