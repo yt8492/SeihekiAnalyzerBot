@@ -13,7 +13,7 @@ class JdbcLineUserRepository(private val jdbcTemplate: JdbcTemplate) : LineUserR
     }
 
     override fun findAll(): List<LineUser> {
-        return jdbcTemplate.query("SELECT id, line_id FROM user", rowMapper)
+        return jdbcTemplate.query("SELECT id, line_id FROM line_user", rowMapper)
     }
 
     override fun save(lineId: String): LineUser {
