@@ -65,7 +65,7 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
         pushMessage(userId, result)
     }
 
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Tokyo")
+    @Scheduled(cron = "0 0 21 * * *", zone = "Asia/Tokyo")
     fun recommend() {
         CoroutineScope(Dispatchers.IO).launch {
             val userIds = seihekiAnalyzerService.findAllUserIds()
