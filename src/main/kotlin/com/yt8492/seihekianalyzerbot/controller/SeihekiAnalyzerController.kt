@@ -56,11 +56,11 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
             cnt++
             tagCnt[tag] = cnt
         }
-        val result = tagCnt.toList()
-                .sortedByDescending { it.second }
+        val result = tagCnt.asSequence()
+                .sortedByDescending { it.value }
                 .take(10)
-                .mapIndexed { index, pair ->
-                    "%2d位 %2.2f%%: ${pair.first}".format(index + 1, (pair.second.toDouble() / works.size) * 100)
+                .mapIndexed { index, entry ->
+                    "%2d位 %2.2f%%: ${entry.key}".format(index + 1, (entry.value.toDouble() / works.size) * 100)
                 }.joinToString("\n")
         pushMessage(userId, result)
     }
@@ -94,9 +94,11 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
             cnt++
             tagCnt[tag] = cnt
         }
-        val result = tagCnt.toList()
-                .sortedByDescending { it.second }
+        val result = tagCnt.asSequence()
+                .sortedByDescending { it.value }
                 .take(10)
+                .map { Pair(it.key, it.value) }
+                .toList()
         return result
     }
 
