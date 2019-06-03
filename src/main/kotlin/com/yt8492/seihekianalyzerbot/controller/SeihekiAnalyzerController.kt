@@ -38,7 +38,6 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
                     recommend(userId)
                 }
             }
-            else -> seihekiAnalyzerService.saveTest(messageText)
         }
     }
 

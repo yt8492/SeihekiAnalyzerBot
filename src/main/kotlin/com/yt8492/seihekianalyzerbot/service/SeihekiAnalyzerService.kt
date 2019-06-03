@@ -7,5 +7,4 @@ interface SeihekiAnalyzerService {
     fun fetchWorkByUrl(url: String): Work
     fun registerUser(userId: String)
     fun findAllUserIds(): List<String>
-    fun saveTest(test: String)
 }

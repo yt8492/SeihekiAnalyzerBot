@@ -13,8 +13,7 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
                                  private val tagRepository: TagRepository,
                                  private val urlTagRepository: UrlTagRepository,
                                  private val lineUserRepository: LineUserRepository,
-                                 seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration,
-                                 private val testRepository: TestRepository)
+                                 seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration)
     : SeihekiAnalyzerService {
     val seihekiAnalyzer = SeihekiAnalyzer.login(seihekiAnalyzerConfiguration.id, seihekiAnalyzerConfiguration.password)
             ?: error("invalid userId or password")
@@ -53,11 +52,5 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
 
     override fun findAllUserIds(): List<String> {
         return lineUserRepository.findAll().map(LineUser::line_id)
-    }
-
-    override fun saveTest(test: String) {
-        if (testRepository.findByTestData(test) == null) {
-            testRepository.save(test)
-        }
     }
 }
