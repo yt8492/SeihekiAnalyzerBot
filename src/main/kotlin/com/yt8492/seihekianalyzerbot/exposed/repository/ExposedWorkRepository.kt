@@ -1,11 +1,11 @@
 package com.yt8492.seihekianalyzerbot.exposed.repository
 
+import com.yt8492.seihekianalyzerbot.exposed.dao.Tag
 import com.yt8492.seihekianalyzerbot.exposed.dao.Work
 import com.yt8492.seihekianalyzerbot.exposed.table.Tags
-import com.yt8492.seihekianalyzerbot.exposed.table.WorkTags
 import com.yt8492.seihekianalyzerbot.exposed.table.Works
 import com.yt8492.seihekianalyzerbot.repository.WorkRepository
-import org.jetbrains.exposed.sql.insertIgnore
+import org.jetbrains.exposed.sql.SizedCollection
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -27,18 +27,18 @@ class ExposedWorkRepository : WorkRepository {
     }
 
     override fun save(work: com.yt8492.seihekianalyzerbot.model.Work): com.yt8492.seihekianalyzerbot.model.Work {
-        val insertWork = Works.insertIgnore {
-            it[url] = work.url
+        if (!Work.find { Works.url eq work.url }.empty()) {
+            return work
         }
-        work.tags.forEach { tag ->
-            val tagId = Tags.insertIgnore {
-                it[this.tag] = tag
-            } get Tags.id
-            WorkTags.insertIgnore {
-                it[this.tag] = tagId
-                it[this.work] = insertWork get Works.id
+        val tags = work.tags.map {
+            Tag.find { Tags.tag eq it }.firstOrNull() ?: Tag.new {
+                this.tag = it
             }
         }
-        return work
+        return Work.new {
+            this.url = work.url
+        }.apply {
+            this.tags = SizedCollection(tags)
+        }.toModel()
     }
 }
