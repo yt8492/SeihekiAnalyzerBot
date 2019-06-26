@@ -1,6 +1,6 @@
 package com.yt8492.seihekianalyzerbot.service
 
-import com.yt8492.seihekianalyzerbot.entity.Work
+import com.yt8492.seihekianalyzerbot.model.Work
 
 interface SeihekiAnalyzerService {
     fun findAllWorks(): List<Work>

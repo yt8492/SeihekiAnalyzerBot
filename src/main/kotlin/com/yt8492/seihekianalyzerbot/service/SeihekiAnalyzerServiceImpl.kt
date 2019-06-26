@@ -1,6 +1,6 @@
 package com.yt8492.seihekianalyzerbot.service
 
-import com.yt8492.seihekianalyzerbot.entity.*
+import com.yt8492.seihekianalyzerbot.model.*
 import com.yt8492.seihekianalyzerbot.property.SeihekiAnalyzerConfiguration
 import com.yt8492.seihekianalyzerbot.repository.*
 import com.yt8492.seihekianalyzerbot.tools.SeihekiAnalyzer
@@ -9,10 +9,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
-                                 private val tagRepository: TagRepository,
-                                 private val urlTagRepository: UrlTagRepository,
-                                 private val lineUserRepository: LineUserRepository,
+class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserRepository,
+                                 private val workRepository: WorkRepository,
                                  seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration)
     : SeihekiAnalyzerService {
     val seihekiAnalyzer = SeihekiAnalyzer.login(seihekiAnalyzerConfiguration.id, seihekiAnalyzerConfiguration.password)
@@ -25,25 +23,13 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
     }
 
     override fun fetchWorkByUrl(url: String): Work {
-        val urlId = urlRepository.findByUrl(url)?.id
-        return if (urlId != null) {
-            val urlTag = urlTagRepository.findAllByUrlId(urlId)
-            val tags = urlTag.map { tagRepository.findById(it.tagId) }
-                    .mapNotNull { it?.tag }
-            Work(url, tags)
-        } else {
-            createWork(url)
-        }
+        return workRepository.findByUrl(url) ?: createWork(url)
     }
 
     private fun createWork(url: String): Work {
-        val urlId = urlRepository.save(url).id
         val tags = SeihekiAnalyzer.getTagsFromUrl(url)
-        tags.map{ tagRepository.findByTag(it) ?: tagRepository.save(it) }
-                .forEach { tag ->
-                    urlTagRepository.findByUrlIdAndTagId(urlId, tag.id) ?: urlTagRepository.save(urlId, tag.id)
-                }
-        return Work(url, tags)
+        val work =  Work(url, tags)
+        return workRepository.save(work)
     }
 
     override fun registerUser(userId: String) {
@@ -51,6 +37,6 @@ class SeihekiAnalyzerServiceImpl(private val urlRepository: UrlRepository,
     }
 
     override fun findAllUserIds(): List<String> {
-        return lineUserRepository.findAll().map(LineUser::line_id)
+        return lineUserRepository.findAll().map(LineUser::lineId)
     }
 }

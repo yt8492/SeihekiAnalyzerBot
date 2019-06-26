@@ -8,24 +8,33 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.yt8492'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
+
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
+    implementation 'org.jetbrains.exposed:exposed:0.14.4'
+    implementation 'org.jetbrains.exposed:spring-transaction:0.14.4'
+
     implementation 'com.linecorp.bot:line-bot-spring-boot:2.4.0'
+
     implementation 'org.jsoup:jsoup:1.7.3'
-    runtimeOnly 'org.postgresql:postgresql'
+
+    implementation 'org.postgresql:postgresql:42.2.2'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

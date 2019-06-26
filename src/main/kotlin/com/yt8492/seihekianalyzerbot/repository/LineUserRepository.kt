@@ -1,6 +1,6 @@
 package com.yt8492.seihekianalyzerbot.repository
 
-import com.yt8492.seihekianalyzerbot.entity.LineUser
+import com.yt8492.seihekianalyzerbot.model.LineUser
 
 interface LineUserRepository {
     fun findAll(): List<LineUser>
