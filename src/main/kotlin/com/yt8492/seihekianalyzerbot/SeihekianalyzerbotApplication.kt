@@ -23,7 +23,9 @@ open class SeihekianalyzerbotApplication {
 
     @Bean
     fun createTables() {
-        SchemaUtils.create(Tags, Works, WorkTags, LineUsers)
+        transaction {
+            SchemaUtils.create(Tags, Works, WorkTags, LineUsers)
+        }
     }
 }
 
