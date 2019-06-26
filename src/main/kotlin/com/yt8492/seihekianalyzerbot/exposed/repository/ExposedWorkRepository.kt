@@ -31,6 +31,7 @@ class ExposedWorkRepository : WorkRepository {
                 .let { SizedCollection(it) }
         return Work.new {
             this.url = work.url
+        }.apply {
             this.tags = tags
         }.toModel()
     }
