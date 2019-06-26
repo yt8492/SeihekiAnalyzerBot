@@ -1,4 +1,4 @@
-package com.yt8492.seihekianalyzerbot.entity
+package com.yt8492.seihekianalyzerbot.model
 
 data class Work(
         val url: String,
