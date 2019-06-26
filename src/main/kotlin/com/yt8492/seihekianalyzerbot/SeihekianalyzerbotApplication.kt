@@ -1,6 +1,7 @@
 package com.yt8492.seihekianalyzerbot
 
 import org.jetbrains.exposed.spring.SpringTransactionManager
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
