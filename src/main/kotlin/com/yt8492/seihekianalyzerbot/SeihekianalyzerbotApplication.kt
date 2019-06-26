@@ -6,6 +6,8 @@ import com.yt8492.seihekianalyzerbot.exposed.table.WorkTags
 import com.yt8492.seihekianalyzerbot.exposed.table.Works
 import org.jetbrains.exposed.spring.SpringTransactionManager
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -24,6 +26,7 @@ open class SeihekianalyzerbotApplication {
     @Bean
     fun createTables() {
         transaction {
+            addLogger(StdOutSqlLogger)
             SchemaUtils.create(Tags, Works, WorkTags, LineUsers)
         }
     }
