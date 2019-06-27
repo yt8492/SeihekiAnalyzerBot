@@ -18,11 +18,11 @@ class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserReposit
 
     override fun findAllWorks(): List<Work> {
         val allUrls = seihekiAnalyzer.getUrls()
-        val allWorks = allUrls.map { fetchWorkByUrl(it) }
+        val allWorks = allUrls.map { findOrCreateWorkByUrl(it) }
         return allWorks
     }
 
-    override fun fetchWorkByUrl(url: String): Work {
+    override fun findOrCreateWorkByUrl(url: String): Work {
         return workRepository.findByUrl(url) ?: createWork(url)
     }
 
@@ -38,5 +38,33 @@ class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserReposit
 
     override fun findAllUserIds(): List<String> {
         return lineUserRepository.findAll().map(LineUser::lineId)
+    }
+
+    override fun getAnalyzeResults(): List<AnalyzeResult> {
+        val works = findAllWorks()
+        val tagCnt = mutableMapOf<String, Int>()
+        works.flatMap(Work::tags).forEach { tag ->
+            var cnt = tagCnt[tag] ?: 0
+            cnt++
+            tagCnt[tag] = cnt
+        }
+        val result = tagCnt.asSequence()
+                .sortedByDescending { it.value }
+                .take(10)
+                .map { AnalyzeResult(it.key, (it.value.toDouble() / works.size) * 100) }
+                .toList()
+        return result
+    }
+
+    override fun getRecommendedWorks(): List<Work> {
+        val latestWorks = SeihekiAnalyzer.getLatestWorks().map {
+            Work(it.key, it.value)
+        }
+        val myFavoriteTags = getAnalyzeResults().map { it.tag }
+        val recommends = latestWorks.filter { work ->
+            val tagCnt = work.tags.intersect(myFavoriteTags).size
+            tagCnt >= 2
+        }
+        return recommends
     }
 }
