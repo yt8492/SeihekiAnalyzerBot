@@ -57,9 +57,8 @@ class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserReposit
     }
 
     override fun getRecommendedWorks(): List<Work> {
-        val latestWorks = SeihekiAnalyzer.getLatestWorks().map {
-            Work(it.key, it.value)
-        }
+        val latestWorks = SeihekiAnalyzer.getLatestWorks()
+                .map { Work(it.key, it.value) }
         val myFavoriteTags = getAnalyzeResults().map { it.tag }
         val recommends = latestWorks.filter { work ->
             val tagCnt = work.tags.intersect(myFavoriteTags).size

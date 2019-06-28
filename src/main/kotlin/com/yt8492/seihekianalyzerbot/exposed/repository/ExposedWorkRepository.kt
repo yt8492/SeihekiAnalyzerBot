@@ -31,14 +31,12 @@ class ExposedWorkRepository : WorkRepository {
             return work
         }
         val tags = work.tags.map {
-            Tag.find { Tags.tag eq it }.firstOrNull() ?: Tag.new {
-                this.tag = it
-            }
+            Tag.find { Tags.tag eq it }
+                    .firstOrNull()
+                    ?: Tag.new { this.tag = it }
         }
-        return Work.new {
-            this.url = work.url
-        }.apply {
-            this.tags = SizedCollection(tags)
-        }.toModel()
+        return Work.new { this.url = work.url }
+                .apply { this.tags = SizedCollection(tags) }
+                .toModel()
     }
 }
