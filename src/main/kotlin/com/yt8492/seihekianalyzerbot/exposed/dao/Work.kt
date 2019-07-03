@@ -11,13 +11,4 @@ class Work(id: EntityID<Long>) : LongEntity(id) {
 
     var url by Works.url
     var tags by Tag via WorkTags
-
-    fun toModel(): com.yt8492.seihekianalyzerbot.model.Work {
-        return com.yt8492.seihekianalyzerbot.model.Work(
-                this.url,
-                this.tags.map {
-                    it.tag
-                }
-        )
-    }
 }

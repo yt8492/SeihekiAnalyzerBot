@@ -9,8 +9,4 @@ class LineUser(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<LineUser>(LineUsers)
 
     var lineId by LineUsers.lineId
-
-    fun toModel(): com.yt8492.seihekianalyzerbot.model.LineUser {
-        return com.yt8492.seihekianalyzerbot.model.LineUser(lineId)
-    }
 }

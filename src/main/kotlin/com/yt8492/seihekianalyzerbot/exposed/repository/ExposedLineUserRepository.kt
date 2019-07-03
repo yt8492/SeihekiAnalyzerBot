@@ -8,11 +8,14 @@ import org.springframework.stereotype.Repository
 class ExposedLineUserRepository : LineUserRepository {
     override fun findAll(): List<com.yt8492.seihekianalyzerbot.model.LineUser> {
         return LineUser.all()
-                .map { it.toModel() }
+                .map(this::dto2model)
     }
 
     override fun save(lineId: String): com.yt8492.seihekianalyzerbot.model.LineUser {
         return LineUser.new { this.lineId = lineId }
-                .toModel()
+                .let(this::dto2model)
     }
+
+    private fun dto2model(lineUser: LineUser): com.yt8492.seihekianalyzerbot.model.LineUser =
+            com.yt8492.seihekianalyzerbot.model.LineUser(lineUser.lineId)
 }

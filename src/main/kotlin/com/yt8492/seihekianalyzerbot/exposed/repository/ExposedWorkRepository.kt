@@ -12,18 +12,18 @@ import org.springframework.stereotype.Repository
 class ExposedWorkRepository : WorkRepository {
     override fun findAll(): List<com.yt8492.seihekianalyzerbot.model.Work> {
         return Work.all()
-                .map { it.toModel() }
+                .map(this::dto2model)
     }
 
     override fun findAllByUrl(urls: List<String>): List<com.yt8492.seihekianalyzerbot.model.Work> {
         return Work.find { Works.url inList urls }
-                .map { it.toModel() }
+                .map(this::dto2model)
     }
 
     override fun findByUrl(url: String): com.yt8492.seihekianalyzerbot.model.Work? {
         return Work.find {
             Works.url eq url
-        }.firstOrNull()?.toModel()
+        }.firstOrNull()?.let(this::dto2model)
     }
 
     override fun save(work: com.yt8492.seihekianalyzerbot.model.Work): com.yt8492.seihekianalyzerbot.model.Work {
@@ -37,6 +37,9 @@ class ExposedWorkRepository : WorkRepository {
         }
         return Work.new { this.url = work.url }
                 .apply { this.tags = SizedCollection(tags) }
-                .toModel()
+                .let(this::dto2model)
     }
+
+    private fun dto2model(work: Work): com.yt8492.seihekianalyzerbot.model.Work =
+            com.yt8492.seihekianalyzerbot.model.Work(work.url, work.tags.map(Tag::tag))
 }
