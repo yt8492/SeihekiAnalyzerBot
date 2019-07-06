@@ -37,7 +37,8 @@ class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserReposit
     }
 
     override fun findAllUserIds(): List<String> {
-        return lineUserRepository.findAll().map(LineUser::lineId)
+        return lineUserRepository.findAll()
+                .map(LineUser::lineId)
     }
 
     override fun getAnalyzeResults(): List<AnalyzeResult> {

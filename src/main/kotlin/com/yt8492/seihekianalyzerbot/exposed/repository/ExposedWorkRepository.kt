@@ -21,9 +21,9 @@ class ExposedWorkRepository : WorkRepository {
     }
 
     override fun findByUrl(url: String): com.yt8492.seihekianalyzerbot.model.Work? {
-        return Work.find {
-            Works.url eq url
-        }.firstOrNull()?.let(this::dto2model)
+        return Work.find { Works.url eq url }
+                .firstOrNull()
+                ?.let(this::dto2model)
     }
 
     override fun save(work: com.yt8492.seihekianalyzerbot.model.Work): com.yt8492.seihekianalyzerbot.model.Work {
