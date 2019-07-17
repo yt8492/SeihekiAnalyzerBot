@@ -5,10 +5,8 @@ import com.yt8492.seihekianalyzerbot.property.SeihekiAnalyzerConfiguration
 import com.yt8492.seihekianalyzerbot.repository.*
 import com.yt8492.seihekianalyzerbot.tools.SeihekiAnalyzer
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserRepository,
                                  private val workRepository: WorkRepository,
                                  seihekiAnalyzerConfiguration: SeihekiAnalyzerConfiguration)

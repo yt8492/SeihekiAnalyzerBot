@@ -7,25 +7,30 @@ import com.yt8492.seihekianalyzerbot.exposed.table.Works
 import com.yt8492.seihekianalyzerbot.repository.WorkRepository
 import org.jetbrains.exposed.sql.SizedCollection
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 class ExposedWorkRepository : WorkRepository {
+    @Transactional
     override fun findAll(): List<com.yt8492.seihekianalyzerbot.model.Work> {
         return Work.all()
                 .map(this::dto2model)
     }
 
+    @Transactional
     override fun findAllByUrl(urls: List<String>): List<com.yt8492.seihekianalyzerbot.model.Work> {
         return Work.find { Works.url inList urls }
                 .map(this::dto2model)
     }
 
+    @Transactional
     override fun findByUrl(url: String): com.yt8492.seihekianalyzerbot.model.Work? {
         return Work.find { Works.url eq url }
                 .firstOrNull()
                 ?.let(this::dto2model)
     }
 
+    @Transactional
     override fun save(work: com.yt8492.seihekianalyzerbot.model.Work): com.yt8492.seihekianalyzerbot.model.Work {
         if (!Work.find { Works.url eq work.url }.empty()) {
             return work
