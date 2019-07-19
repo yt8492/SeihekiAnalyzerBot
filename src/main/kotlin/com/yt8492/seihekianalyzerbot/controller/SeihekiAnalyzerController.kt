@@ -43,7 +43,7 @@ open class SeihekiAnalyzerController(private val seihekiAnalyzerService: Seiheki
     }
 
     private fun analyzeAndPushMessage(userId: String) {
-        val analyzeResults = seihekiAnalyzerService.getAnalyzeResults()
+        val analyzeResults = seihekiAnalyzerService.getAnalyzeResults().take(10)
         seihekiAnalyzerPresenter.showAnalyzeResult(analyzeResults, userId)
     }
 

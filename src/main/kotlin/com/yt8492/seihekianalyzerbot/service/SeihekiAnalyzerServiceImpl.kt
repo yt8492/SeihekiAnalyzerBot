@@ -49,7 +49,6 @@ class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserReposit
         }
         val result = tagCnt.asSequence()
                 .sortedByDescending { it.value }
-                .take(10)
                 .map { AnalyzeResult(it.key, (it.value.toDouble() / works.size) * 100) }
                 .toList()
         return result
@@ -58,7 +57,8 @@ class SeihekiAnalyzerServiceImpl(private val lineUserRepository: LineUserReposit
     override fun getRecommendedWorks(): List<Work> {
         val latestWorks = SeihekiAnalyzer.getLatestWorks()
                 .map { Work(it.key, it.value) }
-        val myFavoriteTags = getAnalyzeResults().map { it.tag }
+        val myFavoriteTags = getAnalyzeResults().takeWhile { it.percentage >= 10 }
+                .map { it.tag }
         val recommends = latestWorks.filter { work ->
             val tagCnt = work.tags.intersect(myFavoriteTags).size
             tagCnt >= 2
