@@ -135,7 +135,7 @@ class SeihekiAnalyzer private constructor(private val loginCookies: Map<String, 
         fun getLatestWorks(): Map<String, List<String>> {
             val today = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"))
             val todayYMD = today.let { "${it.get(Calendar.YEAR)}-${it.get(Calendar.MONTH) + 1}-${it.get(Calendar.DATE)}" }
-            val latestWorksUrl = "https://www.dlsite.com/maniax/new/=/date/$todayYMD/work_type%5B0%5D/SOU"
+            val latestWorksUrl = "https://www.dlsite.com/maniax/new/=/date/$todayYMD/work_type_category/voice"
             val page = JsoupUtils.requestByGet(latestWorksUrl).parse()
             val works = page.getElementsByClass("work_2col").asSequence()
                     .map {
